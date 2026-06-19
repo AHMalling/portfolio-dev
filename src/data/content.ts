@@ -48,6 +48,16 @@ export const projects: {
     category: "Landing Page",
     imageUrl: "/projects/PsykologLanding.jpg",
   },
+  {
+    id: "04",
+    title: "Fantasy Cycling",
+    description:
+      "Fantasy sports platform for professional cycling — pick a team of 20 real pro riders within a UCI point budget and compete based on their actual race results throughout the season. Features a live leaderboard, rider directory, league system, and performance analytics showing each rider's return on investment.",
+    tags: ["React", "Tailwind", "Django", "PostgreSQL"],
+    liveUrl: "https://fantasy-cycling-c8uk.vercel.app/",
+    category: "Sports",
+    imageUrl: "/projects/Fantasy Cycling.jpg",
+  },
 ];
 
 export const skillCategories = [
