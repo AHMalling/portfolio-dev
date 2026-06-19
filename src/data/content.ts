@@ -26,6 +26,7 @@ export const projects: {
     liveUrl: "https://kfeappen-clone.vercel.app/",
     note: "Desktop only — restricted phone access for security reasons.",
     category: "Healthcare",
+    imageUrl: "/projects/AuhCancerResearch.jpg",
   },
   {
     id: "02",
@@ -35,6 +36,7 @@ export const projects: {
     tags: ["React", "Next.js", "Tailwind", "Framer Motion"],
     liveUrl: "https://julekalenderen.vercel.app/",
     category: "Interactive",
+    imageUrl: "/projects/BajerBiksen.jpg",
   },
   {
     id: "03",
@@ -44,6 +46,7 @@ export const projects: {
     tags: ["React", "Next.js", "Tailwind", "Framer Motion"],
     liveUrl: "https://psykolog-tid-vejle.vercel.app/",
     category: "Landing Page",
+    imageUrl: "/projects/PsykologLanding.jpg",
   },
 ];
 
