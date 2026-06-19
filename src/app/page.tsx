@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -10,7 +10,31 @@ import { BsLinkedin, BsArrowRight } from "react-icons/bs";
 import { HiDownload } from "react-icons/hi";
 import { projects, skillCategories, personalInfo } from "@/data/content";
 
+const NAV_SECTIONS = ["About", "Projects", "Skills", "Contact"];
+
+function useActiveSection() {
+  const [active, setActive] = useState("home");
+  useEffect(() => {
+    const observers: IntersectionObserver[] = [];
+    ["home", ...NAV_SECTIONS.map((s) => s.toLowerCase())].forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const obs = new IntersectionObserver(
+        ([entry]) => { if (entry.isIntersecting) setActive(id); },
+        { rootMargin: "-45% 0px -45% 0px" }
+      );
+      obs.observe(el);
+      observers.push(obs);
+    });
+    return () => observers.forEach((o) => o.disconnect());
+  }, []);
+  return active;
+}
+
 function Nav() {
+  const [open, setOpen] = useState(false);
+  const active = useActiveSection();
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-[#fffdf5]/90 backdrop-blur border-b border-orange-100">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
@@ -18,21 +42,60 @@ function Nav() {
           <span className="text-orange-500">A</span>nders
           <span className="text-rose-500">.</span>
         </span>
+
+        {/* Desktop nav */}
         <nav className="hidden sm:flex items-center gap-8">
-          {["About", "Projects", "Skills", "Contact"].map((s) => (
-            <a key={s} href={`#${s.toLowerCase()}`} className="text-gray-500 hover:text-gray-900 text-sm font-semibold transition-colors">
-              {s}
-            </a>
-          ))}
+          {NAV_SECTIONS.map((s) => {
+            const id = s.toLowerCase();
+            return (
+              <a
+                key={s}
+                href={`#${id}`}
+                className={`text-sm font-semibold transition-colors ${active === id ? "text-orange-500" : "text-gray-500 hover:text-gray-900"}`}
+              >
+                {s}
+              </a>
+            );
+          })}
         </nav>
-        <a
-          href="/CV.pdf"
-          download
-          className="bg-gradient-to-r from-orange-500 to-rose-500 text-white text-sm font-bold px-5 py-2 rounded-full hover:opacity-90 transition flex items-center gap-2 shadow-md shadow-orange-200"
-        >
-          CV <HiDownload size={14} />
-        </a>
+
+        <div className="flex items-center gap-3">
+          <a
+            href="/CV.pdf"
+            download
+            className="bg-gradient-to-r from-orange-500 to-rose-500 text-white text-sm font-bold px-5 py-2 rounded-full hover:opacity-90 transition flex items-center gap-2 shadow-md shadow-orange-200"
+          >
+            CV <HiDownload size={14} />
+          </a>
+          {/* Mobile hamburger */}
+          <button
+            className="sm:hidden p-2 text-gray-600 hover:text-gray-900 transition"
+            onClick={() => setOpen((o) => !o)}
+            aria-label="Toggle menu"
+          >
+            {open ? "✕" : "☰"}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile dropdown */}
+      {open && (
+        <nav className="sm:hidden bg-[#fffdf5] border-t border-orange-100 px-6 py-4 flex flex-col gap-4">
+          {NAV_SECTIONS.map((s) => {
+            const id = s.toLowerCase();
+            return (
+              <a
+                key={s}
+                href={`#${id}`}
+                onClick={() => setOpen(false)}
+                className={`text-sm font-semibold transition-colors ${active === id ? "text-orange-500" : "text-gray-600 hover:text-gray-900"}`}
+              >
+                {s}
+              </a>
+            );
+          })}
+        </nav>
+      )}
     </header>
   );
 }
@@ -172,17 +235,29 @@ function Projects() {
           {projects.map((p, i) => (
             <motion.div
               key={p.id}
-              className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 flex flex-col sm:flex-row"
+              className="bg-white rounded-3xl overflow-hidden shadow-lg border border-gray-100 flex flex-col"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
             >
-              <div className="sm:w-24 bg-gradient-to-b from-orange-500 to-rose-500 flex items-center justify-center py-6 sm:py-0">
-                <span className="font-black text-3xl text-white/30 font-mono">{p.id}</span>
-              </div>
+              {/* Screenshot or placeholder */}
+              {p.imageUrl ? (
+                <div className="relative w-full aspect-video">
+                  <Image src={p.imageUrl} alt={p.title} fill className="object-cover" />
+                </div>
+              ) : (
+                <div className="w-full aspect-video bg-gradient-to-br from-gray-100 to-gray-200 flex flex-col items-center justify-center gap-2 text-gray-400">
+                  <span className="text-3xl">🖼️</span>
+                  <span className="text-xs font-semibold uppercase tracking-widest">Screenshot coming soon</span>
+                </div>
+              )}
 
-              <div className="flex-1 p-7">
+              <div className="flex flex-col sm:flex-row flex-1">
+                <div className="sm:w-20 bg-gradient-to-b from-orange-500 to-rose-500 flex items-center justify-center py-4 sm:py-0">
+                  <span className="font-black text-2xl text-white/30 font-mono">{p.id}</span>
+                </div>
+                <div className="flex-1 p-7">
                 <div className="flex flex-wrap items-start justify-between gap-2 mb-4">
                   <h3 className="text-xl font-black text-gray-900">{p.title}</h3>
                   <span className="bg-orange-50 text-orange-600 border border-orange-200 text-xs font-bold px-3 py-1 rounded-full">{p.category}</span>
@@ -201,6 +276,7 @@ function Projects() {
                     </a>
                   )}
                 </div>
+              </div>
               </div>
             </motion.div>
           ))}
