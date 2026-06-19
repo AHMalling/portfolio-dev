@@ -7,7 +7,16 @@ export const personalInfo = {
   linkedin: "https://www.linkedin.com/in/anders-malling/",
 };
 
-export const projects = [
+export const projects: {
+  id: string;
+  title: string;
+  description: string;
+  tags: string[];
+  liveUrl?: string;
+  note?: string;
+  category: string;
+  imageUrl?: string;
+}[] = [
   {
     id: "01",
     title: "AUH Cancer Department",
